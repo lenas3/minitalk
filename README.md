@@ -1,5 +1,12 @@
 # minitalk
 
+client: client'ın rolü, mesajın her karakterini binary  olarak çevirmek. Sonrasınde her biti ayrı ayrı server'a göndermek. Gönderirken 0 için SIGUSR1 ve SIGUSR2'den birini, 1 biti icin de diğer SIGUSR kullanır (genel kullanımda 0 biti icin SIGUSR1, 1 icin SIGUSR2 kullanılmış ama zorunlu değil, diğer türlü de olabiliyor). Ayrıca server PID'sinin bilinmesi gerekir. 
+
+server: sinyalleri (SIGUSR1 ve SIGUSR2) dinleyip bitleri çözerek iletilmek istenen mesajı alır.
+Gelen bitleri toplayarak 8 bit birikince bir karakter oluşturur. (1 char = 1 byte = 8 bit)
+Topladığı bitleri kullanarak mesajın son halini ekrana yazar. 
+
+--------------------------------------------------------------------------
 kullanılacak bazı fonksiyonlar:
 
   ✅ SIGNAL:
