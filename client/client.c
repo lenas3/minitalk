@@ -1,5 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asay <asay@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/23 20:53:27 by asay              #+#    #+#             */
+/*   Updated: 2025/11/23 20:53:37 by asay             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <signal.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 /*
 1. argüman kontrol et.
@@ -65,8 +78,6 @@ void send_server(char *msg, pid_t pid)
         kill(pid, SIGUSR2);
         i++;
     }
-    //ben SIGUSR2'yi 0 bit icin kullanıyorum. 
-    //burda da 8 tane 0 gönderip mesaj ssnuna 1 byte null eklenmis oluyor.
 }
 
 int main(int argc, char **argv)
