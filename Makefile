@@ -1,23 +1,26 @@
 SERVER_SRC = 	./server/server.c
 CLIENT_SRC = 	./client/client.c
 
-OBJS = $(SERVER_SRC:.c=.o) $(CLIENT_SRC:.c=.o)
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
 SERVER = server_exe
 CLIENT = client_exe
+
+SERVER_OBJS = $(SERVER_SRC:.c=.o)
+CLIENT_OBJS = $(CLIENT_SRC:.c=.o)
 all : $(SERVER) $(CLIENT)
 
-$(SERVER) : 
-	$(CC) $(CFLAGS) -o $(SERVER) $(SERVER_SRC:.c=.o)
+$(SERVER) : $(SERVER_OBJS)
+	$(CC) $(CFLAGS) -o $(SERVER) $(SERVER_OBJS)
 
-$(CLIENT) :  
-	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_SRC:.c=.o)
+$(CLIENT) :  $(CLIENT_OBJS)
+	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_OBJS)
 clean :
-	rm -rf $(OBJS)
+	rm -rf $(SERVER_OBJS) $(CLIENT_OBJS)
 fclean : clean
 	rm -rf $(SERVER) $(CLIENT)
 re : clean all
 
 .PHONY: all clean fclean re 
+

@@ -6,7 +6,7 @@
 /*   By: asay <asay@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 20:53:27 by asay              #+#    #+#             */
-/*   Updated: 2025/11/23 20:53:37 by asay             ###   ########.fr       */
+/*   Updated: 2025/11/25 21:41:32 by asay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-/*
-1. argüman kontrol et.
-2. server PID sini al.
-2.a. PID <= 0 oalaamz!!!
-4. her karakterin her bitini server a gonder.
-*/
 int	ft_atoi(const char *str)
 {
 	int	i;
@@ -45,6 +39,20 @@ int	ft_atoi(const char *str)
 	return (sign * sum);
 }
 
+
+void handle_signal(char *msg, pid_t pid, int i, int j)
+{
+    if((msg[i] >> j) & 1)
+    {
+        kill(pid, SIGUSR1);
+        usleep(100);
+    }
+    else
+    {
+        kill(pid, SIGUSR2);
+        usleep(100); 
+    }
+}
 void send_server(char *msg, pid_t pid)
 {
     int i;
@@ -56,18 +64,7 @@ void send_server(char *msg, pid_t pid)
         j = 7;
         while(j >= 0)
         {
-            if((msg[i] >> j) & 1)
-            {
-                kill(pid, SIGUSR1);
-                usleep(100);
-            }
-            else
-            {
-                kill(pid, SIGUSR2);
-                usleep(100); 
-        //kill'den sonra usleep koymak, sistemin sinyalleri yakalaması icin izin vermek gibi.
-        //daha sağlıklı sinyal yakalayabilmesi icin bir süre uyutuyoruz. yine de biraz daha detaylı araştır.
-            }
+            handle_signal(msg, pid, i, j);
             j--;
         }
         i++;

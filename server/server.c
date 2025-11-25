@@ -73,6 +73,7 @@ int main()
 
     pid = getpid();
     ft_nbr(pid);
+	write(1, "\n", 1);
     signal(SIGUSR1, catch_signal);
     signal(SIGUSR2, catch_signal);
     while(1)
