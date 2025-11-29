@@ -6,7 +6,7 @@
 /*   By: asay <asay@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 20:53:27 by asay              #+#    #+#             */
-/*   Updated: 2025/11/25 21:41:32 by asay             ###   ########.fr       */
+/*   Updated: 2025/11/29 18:43:27 by asay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,18 @@ void handle_signal(char *msg, pid_t pid, int i, int j)
 {
     if((msg[i] >> j) & 1)
     {
+        write(1, "1", 2);
         kill(pid, SIGUSR1);
-        usleep(100);
+        usleep(2000);
     }
     else
     {
+        write(1, "0", 2);
         kill(pid, SIGUSR2);
-        usleep(100); 
+        usleep(2000); 
     }
 }
+
 void send_server(char *msg, pid_t pid)
 {
     int i;
@@ -69,12 +72,7 @@ void send_server(char *msg, pid_t pid)
         }
         i++;
     }
-    i = 0;
-    while(i < 8)
-    {
-        kill(pid, SIGUSR2);
-        i++;
-    }
+
 }
 
 int main(int argc, char **argv)

@@ -47,13 +47,14 @@ int	ft_nbr(int nb)
 	i++;
 	return (i);
 }
+#include <stdio.h>
 
 void catch_signal(int signal)
 {
     static int  bit;
     static char letter;
 
-    letter <<= 1;
+	letter <<= 1;
     if(signal == SIGUSR1)
         letter |= 1;
     else if(signal == SIGUSR2)
@@ -62,11 +63,21 @@ void catch_signal(int signal)
     if(bit == 8)
     {
         write(1, &letter, 1);
+		// print with bits
+		
+		while (bit-- > 0)
+		{
+			if (letter & (1 << (7 - bit)))
+				write(1, "1", 1);
+			else
+				write(1, "0", 1);
+		}
+		write(1, "\n", 1);
+
         bit = 0;
         letter = 0;
     }
 }
-
 int main()
 {
     pid_t pid;

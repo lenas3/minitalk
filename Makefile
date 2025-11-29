@@ -1,11 +1,11 @@
-SERVER_SRC = 	./server/server.c
-CLIENT_SRC = 	./client/client.c
+SERVER_SRC = 	./server_file/server.c
+CLIENT_SRC = 	./client_file/client.c
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SERVER = server_exe
-CLIENT = client_exe
+SERVER = server
+CLIENT = client
 
 SERVER_OBJS = $(SERVER_SRC:.c=.o)
 CLIENT_OBJS = $(CLIENT_SRC:.c=.o)
