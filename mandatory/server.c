@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include "minitalk.h"
 
 int	ft_char(char c)
 {
@@ -47,47 +45,42 @@ int	ft_nbr(int nb)
 	i++;
 	return (i);
 }
-#include <stdio.h>
 
-void catch_signal(int signal)
+void catch_signal(int signal, siginfo_t *info, void *context)
 {
-    static int  bit;
-    static char letter;
+	static int  bit;
+	static char letter;
 
+	(void) context;
 	letter <<= 1;
-    if(signal == SIGUSR1)
-        letter |= 1;
-    else if(signal == SIGUSR2)
-        letter |= 0;
-    bit++;
-    if(bit == 8)
-    {
-        write(1, &letter, 1);
-		// print with bits
-		
-		while (bit-- > 0)
-		{
-			if (letter & (1 << (7 - bit)))
-				write(1, "1", 1);
-			else
-				write(1, "0", 1);
-		}
-		write(1, "\n", 1);
-
-        bit = 0;
-        letter = 0;
-    }
+	if(signal == SIGUSR1)
+		letter |= 1;
+	else if(signal == SIGUSR2)
+		letter |= 0;
+	bit++;
+	if(bit == 8)
+	{
+		write(1, &letter, 1);
+		bit = 0;
+		letter = 0;	
+	}
+	kill(info->si_pid, SIGUSR1);
 }
+
 int main()
 {
-    pid_t pid;
+	struct sigaction sa;
+	pid_t pid;
 
-    pid = getpid();
-    ft_nbr(pid);
+	sa.sa_sigaction = catch_signal; 
+	sa.sa_flags = SA_SIGINFO;
+	write(1, "Server PID: ", 12);
+	pid = getpid();
+	ft_nbr(pid);
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	write(1, "\n", 1);
-    signal(SIGUSR1, catch_signal);
-    signal(SIGUSR2, catch_signal);
-    while(1)
-        pause();
-    return (0);
+	while(1)
+		pause();
+	return (0);
 }
