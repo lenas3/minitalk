@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asay <asay@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/23 20:53:27 by asay              #+#    #+#             */
-/*   Updated: 2025/11/25 21:41:32 by asay             ###   ########.fr       */
+/*   Created: 2025/11/30 20:28:21 by asay              #+#    #+#             */
+/*   Updated: 2025/11/30 20:41:13 by asay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include   "minitalk_bonus.h"
+
+int server_sig;
 
 int	ft_atoi(const char *str)
 {
@@ -39,59 +39,73 @@ int	ft_atoi(const char *str)
 	return (sign * sum);
 }
 
+void client_handler(int signal)
+{
+    if (signal == SIGUSR1)
+    {
+        server_sig = 1;
+        write(1, "Signal Received\n", 16);
+    }
+}
 
 void handle_signal(char *msg, pid_t pid, int i, int j)
 {
+    server_sig = 0;
     if((msg[i] >> j) & 1)
-    {
         kill(pid, SIGUSR1);
-        usleep(100);
-    }
     else
-    {
         kill(pid, SIGUSR2);
-        usleep(100); 
-    }
+    if (server_sig == 0)
+        pause();
 }
+
 void send_server(char *msg, pid_t pid)
 {
     int i;
     int j;
-
+    
     i = 0;
     while(msg[i])
     {
         j = 7;
         while(j >= 0)
         {
-            handle_signal(msg, pid, i, j);
-            j--;
+            handle_signal(msg, pid, i, j); // [TODO] rename function
+            j--; 
         }
         i++;
     }
-    i = 0;
-    while(i < 8)
+    j = 7;
+    while (j >= 0)
     {
+        server_sig = 0;
         kill(pid, SIGUSR2);
-        i++;
+        while (server_sig == 0)
+            pause();
+        j--;
     }
 }
 
 int main(int argc, char **argv)
 {
     pid_t pid;
+    struct sigaction sa;
 
     if(argc == 3)
     {
         pid = ft_atoi(argv[1]);
         if(pid <= 0)
         {
-            write(1, "Gecersiz PID\n", 14);
+            write(1, "Invalid PID\n", 13);
             return 0;
         }
+        sigemptyset(&sa.sa_mask);
+        sa.sa_handler = client_handler;
+        sa.sa_flags = 0;
+        sigaction(SIGUSR1, &sa, NULL);
         send_server(argv[2], pid);
     }
     else
-        write(1, "Yanliş Sayida Argüman Girildi\n", 32);
+        write(1, "Wrong number of arguments\n", 26);
     return 0;
 }
