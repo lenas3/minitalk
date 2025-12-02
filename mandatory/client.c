@@ -17,7 +17,7 @@ int server_sig;
 int	ft_atoi(const char *str)
 {
 	int	i;
-	int	sum;
+	long	sum;
 	int	sign;
 
 	i = 0;
@@ -32,14 +32,18 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	while (str[i] >= '0' && str[i] <= '9')
-	{
-		sum = (sum * 10) + (str[i] - '0');
-		i++;
-	}
+    {
+        sum = (sum * 10) + (str[i] - '0');
+        if (sign == 1 && sum >  2147483647)
+            return (0); 
+        if (sign == -1 && sum > - 2147483648)
+            return (0);
+        i++;
+    }
 	return (sign * sum);
 }
 
-void client_handler(int signal)
+void var_change(int signal)
 {
     if (signal == SIGUSR1)
         server_sig = 1;
@@ -52,8 +56,8 @@ void handle_signal(char *msg, pid_t pid, int i, int j)
         kill(pid, SIGUSR1);
     else
         kill(pid, SIGUSR2);
-    if (server_sig == 0)
-        pause();
+    while (server_sig == 0)
+        usleep(100);
 }
 
 void send_server(char *msg, pid_t pid)
@@ -67,7 +71,7 @@ void send_server(char *msg, pid_t pid)
         j = 7;
         while(j >= 0)
         {
-            handle_signal(msg, pid, i, j); // [TODO] rename function
+            handle_signal(msg, pid, i, j); 
             j--; 
         }
         i++;
@@ -86,7 +90,7 @@ void send_server(char *msg, pid_t pid)
 int main(int argc, char **argv)
 {
     pid_t pid;
-    struct sigaction sa;
+    struct sigaction sigact;
 
     if(argc == 3)
     {
@@ -96,10 +100,10 @@ int main(int argc, char **argv)
             write(1, "Invalid PID\n", 13);
             return 0;
         }
-        sigemptyset(&sa.sa_mask);
-        sa.sa_handler = client_handler;
-        sa.sa_flags = 0;
-        sigaction(SIGUSR1, &sa, NULL);
+        sigemptyset(&sigact.sa_mask);
+        sigact.sa_handler = var_change;
+        sigact.sa_flags = 0;
+        sigaction(SIGUSR1, &sigact, NULL);
         send_server(argv[2], pid);
     }
     else

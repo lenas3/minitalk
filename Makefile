@@ -17,6 +17,7 @@ BONUS_CLIENT_OBJS = $(BONUS_CLIENT_SRC:.c=.o)
 BONUS_SERVER_OBJS = $(BONUS_SERVER_SRC:.c=.o)
 
 all : $(SERVER) $(CLIENT) 
+bonus: $(SERVER_BONUS) $(CLIENT_BONUS)
 
 $(SERVER) : $(SERVER_OBJS)
 	$(CC) $(CFLAGS) -o $(SERVER) $(SERVER_OBJS)
@@ -30,12 +31,12 @@ $(SERVER_BONUS) :  $(BONUS_SERVER_OBJS)
 $(CLIENT_BONUS) :  $(BONUS_CLIENT_OBJS)
 	$(CC) $(CFLAGS) -o $(CLIENT_BONUS) $(BONUS_CLIENT_OBJS)
 
-bonus: $(SERVER_BONUS) $(CLIENT_BONUS)
 clean :
 	rm -rf $(SERVER_OBJS) $(CLIENT_OBJS) $(BONUS_CLIENT_OBJS) $(BONUS_SERVER_OBJS)
 fclean : clean
 	rm -rf $(SERVER) $(CLIENT) $(SERVER_BONUS) $(CLIENT_BONUS)
-re : clean all
 
-.PHONY: all clean fclean re 
+re : fclean all
+re_bonus : fclean bonus
 
+.PHONY: all clean fclean re bonus

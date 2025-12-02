@@ -10,6 +10,6 @@ void catch_signal(int signal, siginfo_t *info, void *context);
 int	ft_atoi(const char *str);
 void handle_signal(char *msg, pid_t pid, int i, int j);
 void send_server(char *msg, pid_t pid);
-void client_handler(int signal);
+void var_change(int signal);
 
 #endif

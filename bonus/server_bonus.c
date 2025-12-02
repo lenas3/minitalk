@@ -69,16 +69,16 @@ void catch_signal(int signal, siginfo_t *info, void *context)
 
 int main()
 {
-	struct sigaction sa;
+	struct sigaction sigact;
 	pid_t pid;
 
-	sa.sa_sigaction = catch_signal; 
-	sa.sa_flags = SA_SIGINFO;
+	sigact.sa_sigaction = catch_signal; 
+	sigact.sa_flags = SA_SIGINFO;
 	write(1, "Server PID: ", 12);
 	pid = getpid();
 	ft_nbr(pid);
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
+	sigaction(SIGUSR1, &sigact, NULL);
+	sigaction(SIGUSR2, &sigact, NULL);
 	write(1, "\n", 1);
 	while(1)
 		pause();

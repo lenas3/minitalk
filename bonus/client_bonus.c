@@ -39,7 +39,7 @@ int	ft_atoi(const char *str)
 	return (sign * sum);
 }
 
-void client_handler(int signal)
+void var_change(int signal)
 {
     if (signal == SIGUSR1)
     {
@@ -55,8 +55,8 @@ void handle_signal(char *msg, pid_t pid, int i, int j)
         kill(pid, SIGUSR1);
     else
         kill(pid, SIGUSR2);
-    if (server_sig == 0)
-        pause();
+    while (server_sig == 0)
+        usleep(100);
 }
 
 void send_server(char *msg, pid_t pid)
@@ -89,7 +89,7 @@ void send_server(char *msg, pid_t pid)
 int main(int argc, char **argv)
 {
     pid_t pid;
-    struct sigaction sa;
+    struct sigaction sigact;
 
     if(argc == 3)
     {
@@ -99,10 +99,10 @@ int main(int argc, char **argv)
             write(1, "Invalid PID\n", 13);
             return 0;
         }
-        sigemptyset(&sa.sa_mask);
-        sa.sa_handler = client_handler;
-        sa.sa_flags = 0;
-        sigaction(SIGUSR1, &sa, NULL);
+        sigemptyset(&sigact.sa_mask);
+        sigact.sa_handler = client_handler;
+        sigact.sa_flags = 0;
+        sigaction(SIGUSR1, &sigact, NULL);
         send_server(argv[2], pid);
     }
     else
