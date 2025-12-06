@@ -46,41 +46,41 @@ int	ft_nbr(int nb)
 	return (i);
 }
 
-void catch_signal(int signal, siginfo_t *info, void *context)
+void	catch_signal(int signal, siginfo_t *info, void *context)
 {
-	static int  bit;
-	static char letter;
+	static int	bit;
+	static char	letter;
 
 	(void) context;
 	letter <<= 1;
-	if(signal == SIGUSR1)
+	if (signal == SIGUSR1)
 		letter |= 1;
-	else if(signal == SIGUSR2)
+	else if (signal == SIGUSR2)
 		letter |= 0;
 	bit++;
-	if(bit == 8)
+	if (bit == 8)
 	{
 		write(1, &letter, 1);
 		bit = 0;
-		letter = 0;	
+		letter = 0;
 	}
 	kill(info->si_pid, SIGUSR1);
 }
 
-int main()
+int	main(void)
 {
-	struct sigaction sigact;
-	pid_t pid;
+	struct sigaction	sa;
+	pid_t				pid;
 
-	sigact.sa_sigaction = catch_signal; 
-	sigact.sa_flags = SA_SIGINFO;
+	sa.sa_sigaction = catch_signal;
+	sa.sa_flags = SA_SIGINFO;
 	write(1, "Server PID: ", 12);
 	pid = getpid();
 	ft_nbr(pid);
-	sigaction(SIGUSR1, &sigact, NULL);
-	sigaction(SIGUSR2, &sigact, NULL);
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	write(1, "\n", 1);
-	while(1)
+	while (1)
 		pause();
 	return (0);
 }

@@ -1,7 +1,10 @@
 SERVER_SRC = 	./mandatory/server.c
 CLIENT_SRC = 	./mandatory/client.c
+MAN_SRC    = ./mandatory/mandatory_utils.c
+
 BONUS_CLIENT_SRC = 	./bonus/client_bonus.c
 BONUS_SERVER_SRC = 	./bonus/server_bonus.c
+BON_SRC          = ./bonus/bonus_utils.c
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror 
@@ -11,12 +14,12 @@ CLIENT = client
 SERVER_BONUS = server_bonus
 CLIENT_BONUS = client_bonus
 
-SERVER_OBJS = $(SERVER_SRC:.c=.o)
-CLIENT_OBJS = $(CLIENT_SRC:.c=.o)
-BONUS_CLIENT_OBJS = $(BONUS_CLIENT_SRC:.c=.o)
-BONUS_SERVER_OBJS = $(BONUS_SERVER_SRC:.c=.o)
+SERVER_OBJS = $(SERVER_SRC:.c=.o) $(MAN_SRC:.c=.o)
+CLIENT_OBJS = $(CLIENT_SRC:.c=.o) $(MAN_SRC:.c=.o)
+BONUS_CLIENT_OBJS = $(BONUS_CLIENT_SRC:.c=.o) $(BON_SRC:.c=.o)
+BONUS_SERVER_OBJS = $(BONUS_SERVER_SRC:.c=.o) $(BON_SRC:.c=.o)
 
-all : $(SERVER) $(CLIENT) 
+all : $(SERVER) $(CLIENT)
 bonus: $(SERVER_BONUS) $(CLIENT_BONUS)
 
 $(SERVER) : $(SERVER_OBJS)
@@ -25,7 +28,7 @@ $(SERVER) : $(SERVER_OBJS)
 $(CLIENT) :  $(CLIENT_OBJS)
 	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_OBJS)
 
-$(SERVER_BONUS) :  $(BONUS_SERVER_OBJS)
+$(SERVER_BONUS) :  $(BONUS_SERVER_OBJS) 
 	$(CC) $(CFLAGS) -o $(SERVER_BONUS) $(BONUS_SERVER_OBJS)
 
 $(CLIENT_BONUS) :  $(BONUS_CLIENT_OBJS)
